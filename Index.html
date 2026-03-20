@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Meme Quiz Pro 💻</title>
+    <style>
+        /* Общие стили и фон */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(45deg, #0f0c29, #302b63, #24243e);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Стеклянная карточка */
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            transform: translateY(0);
+            transition: 0.5s;
+        }
+
+        h1 { font-size: 2rem; margin-bottom: 20px; text-shadow: 0 0 10px #00d2ff; }
+
+        /* Анимация появления */
+        .fade-in { animation: fadeIn 0.6s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Кнопки ответов */
+        .answers-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #00d2ff;
+            color: #fff;
+            padding: 15px;
+            font-size: 1.1rem;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        .btn:hover {
+            background: #00d2ff;
+            box-shadow: 0 0 20px #00d2ff;
+            color: #000;
+            transform: translateY(-3px);
+        }
+
+        /* Мемы */
+        .meme-img {
+            width: 100%;
+            max-height: 250px;
+            object-fit: contain;
+            border-radius: 15px;
+            margin-top: 20px;
+            display: none;
+            box-shadow: 0 0 15px rgba(255,255,255,0.3);
+        }
+
+        /* Кнопка "Дальше" */
+        #next-btn {
+            background: #ff0080;
+            border: none;
+            padding: 15px 30px;
+            margin-top: 20px;
+            font-weight: bold;
+            display: none;
+            box-shadow: 0 0 15px #ff0080;
+        }
+
+        /* Результаты */
+        .result-screen { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container fade-in" id="quiz-box">
+    <div id="game-ui">
+        <h1 id="q-text">Вопрос грузится...</h1>
+        <div class="answers-grid" id="ans-box"></div>
+        <img id="meme-pic" class="meme-img" alt="Мем">
+        <button id="next-btn" class="btn">СЛЕДУЮЩИЙ ВОПРОС ➔</button>
+    </div>
+
+    <div class="result-screen" id="res-ui">
+        <h1>Квиз пройден! 🏆</h1>
+        <p id="final-score" style="font-size: 1.5rem;"></p>
+        <button class="btn" onclick="location.reload()">ЕЩЕ РАЗ</button>
+    </div>
+</div>
+
+<script>
+    // Твои звуки
+    const sCorrect = new Audio('correct.mp3');
+    const sWrong = new Audio('wrong.mp3');
+
+    // Твои 20 ссылок, которые я бережно расставил
+    const quizData = [
+        { q: "Что такое HTML?", a: ["Язык разметки", "Язык программирования"], ok: 0, mC: "https://i.ibb.co/Q3bnMVNg/b120e00c34bdcef1bc63e4bbf61f08b2.jpg", mW: "https://i.ibb.co/nqvJKX96/5b920809473378aae3b6c81d99f222de.jpg" },
+        { q: "Система счисления ПК?", a: ["Двоичная", "Десятичная"], ok: 0, mC: "https://i.ibb.co/TMnPxH08/062244a274f14bac6a574aa70a210b55.jpg", mW: "https://i.ibb.co/6RHWNFMZ/2537fd8775db439628db40822604cf4a.jpg" },
+        { q: "Мозг компьютера?", a: ["Процессор", "Видеокарта"], ok: 0, mC: "https://i.ibb.co/bZn0mPf/b7310eccd9b10909f2a14c5df99009d3.jpg", mW: "https://i.ibb.co/0pkLPsNW/c759c02d64bd2e465250e35733d07082.jpg" },
+        { q: "Ошибка в коде?", a: ["Баг", "Фича"], ok: 0, mC: "https://i.ibb.co/d04LhG1W/7f07a7c3eb602bc4a99d9ea4d22f38a0.jpg", mW: "https://i.ibb.co/Z1k6kWrF/2229299b41dcff3cb2f627672e9374a8.jpg" },
+        { q: "Для чего нужен CSS?", a: ["Для красоты/стиля", "Для баз данных"], ok: 0, mC: "https://i.ibb.co/rVp8mFg/b8fa2036e07be399b7a86791902c919e.jpg", mW: "https://i.ibb.co/WpHhyPXf/b7debdf6e346b9619ec821380408dd13.jpg" },
+        { q: "1 Гб — это сколько?", a: ["1024 Мб", "1000 Мб"], ok: 0, mC: "https://i.ibb.co/4w0NSjmP/15c60e12d6140c98731423a283303575.jpg", mW: "https://i.ibb.co/ym4M1rLc/e0507bbd915b36e74b4233613d54f80f.gif" },
+        { q: "Что делает Ctrl + Z?", a: ["Отменяет действие", "Копирует"], ok: 0, mC: "https://i.ibb.co/YTw2X4FN/e43cfe173ed2a556d7c6eaace45754cd.jpg", mW: "https://i.ibb.co/bRsgvw2L/2593af15c04f2c0cc26e7c9efa188c7b.jpg" },
+        { q: "Язык в честь змеи?", a: ["Python", "C++"], ok: 0, mC: "https://i.ibb.co/5xCXp3mk/40a06494a9d4528d2f6cddf967bd9ff8.jpg", mW: "https://i.ibb.co/cpZzjT7/cf1a1a190fc521a534687e6d0ccb9bf6.jpg" },
+        { q: "Что такое URL?", a: ["Адрес сайта", "Тип памяти"], ok: 0, mC: "https://i.ibb.co/spGsBhm5/dfcf944ce161be48376b49a7bd84eff5.jpg", mW: "https://i.ibb.co/BHPwnvK8/072531631eafbf66ff837e4404313669.jpg" },
+        { q: "Как выйти из Vim?", a: [":wq", "Просто закрыть"], ok: 0, mC: "https://i.ibb.co/GfmCMHdv/b6deb519ad7697ea88d3f36b08df5aa1.jpg", mW: "https://i.ibb.co/sp8v97fs/f761d08b2a4d5ef21a9f733231322b0e.jpg" }
+    ];
+
+    let current = 0;
+    let score = 0;
+
+    function renderQuestion() {
+        const q = quizData[current];
+        document.getElementById('q-text').innerText = q.q;
+        const box = document.getElementById('ans-box');
+        box.innerHTML = "";
+        q.a.forEach((text, i) => {
+            const b = document.createElement('button');
+            b.innerText = text;
+            b.classList.add('btn');
+            b.onclick = () => check(i);
+            box.appendChild(b);
+        });
+        document.getElementById('meme-pic').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'none';
+    }
+
+    function check(idx) {
+        const q = quizData[current];
+        const meme = document.getElementById('meme-pic');
+        document.getElementById('ans-box').innerHTML = "";
+        meme.style.display = "block";
+        
+        if(idx === q.ok) {
+            score++;
+            sCorrect.play().catch(()=>{});
+            meme.src = q.mC;
+        } else {
+            sWrong.play().catch(()=>{});
+            meme.src = q.mW;
+        }
+
+        if(current < quizData.length - 1) {
+            document.getElementById('next-btn').style.display = "inline-block";
+        } else {
+            setTimeout(finish, 2000);
+        }
+    }
+
+    document.getElementById('next-btn').onclick = () => {
+        current++;
+        renderQuestion();
+    }
+
+    function finish() {
+        document.getElementById('game-ui').style.display = "none";
+        document.getElementById('res-ui').style.display = "block";
+        document.getElementById('final-score').innerText = "Твой счёт: " + score + " из 10";
+    }
+
+    renderQuestion();
+</script>
+
+</body>
+</html>
