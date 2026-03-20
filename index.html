@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IT Meme Quiz: Final Edition 🚀</title>
+    <title>IT Meme Quiz: Lite & Fun 🚀</title>
     <style>
         :root {
-            --accent: #00d2ff;
+            --accent: #00f2fe;
             --pink: #ff0080;
-            --bg: #0b0e14;
+            --bg: #0f172a;
         }
 
         body {
             margin: 0;
-            font-family: 'Segoe UI', sans-serif;
-            background: #1a1a2e;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            background: radial-gradient(circle at top right, #1e293b, #0f172a);
             color: white;
             display: flex;
             justify-content: center;
@@ -22,176 +23,190 @@
             min-height: 100vh;
         }
 
-        .container {
-            background: rgba(255, 255, 255, 0.07);
-            backdrop-filter: blur(10px);
-            border: 2px solid var(--accent);
-            border-radius: 20px;
-            padding: 25px;
+        /* Контейнер с эффектом стекла */
+        .quiz-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 30px;
             width: 90%;
             max-width: 450px;
             text-align: center;
-            box-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.5s ease;
         }
 
-        .progress { font-size: 0.9rem; color: var(--accent); margin-bottom: 10px; }
-        h2 { font-size: 1.3rem; margin-bottom: 20px; min-height: 50px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .ans-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        /* Полоска прогресса */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        #progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent), var(--pink));
+            transition: width 0.4s ease;
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        h2 { font-size: 1.4rem; margin-bottom: 25px; line-height: 1.3; }
+
+        .answers-list { display: grid; gap: 12px; }
 
         .btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid var(--accent);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             color: white;
-            padding: 14px;
-            border-radius: 10px;
+            padding: 16px;
+            border-radius: 14px;
             cursor: pointer;
-            font-size: 1rem;
-            transition: 0.3s;
+            font-size: 1.05rem;
+            transition: 0.2s;
+            outline: none;
         }
 
-        .btn:hover:not(:disabled) { background: var(--accent); color: #000; }
-        
-        /* Цвета ответов */
-        .correct { background: #2ecc71 !important; border-color: #2ecc71 !important; color: white !important; }
-        .wrong { background: #e74c3c !important; border-color: #e74c3c !important; color: white !important; }
+        .btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent);
+            transform: scale(1.02);
+        }
 
-        /* Мемы */
-        .meme-wrap { margin-top: 15px; height: 200px; display: none; }
-        .meme-img { width: 100%; height: 100%; object-fit: contain; border-radius: 10px; border: 1px solid var(--pink); }
+        .correct { background: #10b981 !important; border-color: #10b981 !important; box-shadow: 0 0 15px #10b981; }
+        .wrong { background: #ef4444 !important; border-color: #ef4444 !important; }
 
-        /* Кнопка "Дальше" - теперь она видна, но заблокирована до ответа */
-        #next-btn {
-            background: var(--pink);
+        .meme-area { margin-top: 20px; height: 180px; display: none; }
+        .meme-img { width: 100%; height: 100%; object-fit: contain; border-radius: 12px; }
+
+        /* Кнопка управления */
+        #action-btn {
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            color: #000;
             border: none;
             width: 100%;
-            margin-top: 20px;
-            font-weight: bold;
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
+            margin-top: 25px;
+            padding: 16px;
+            border-radius: 14px;
+            font-weight: 800;
+            font-size: 1rem;
             cursor: pointer;
-            opacity: 0.3; /* Тусклая, пока не ответишь */
-            pointer-events: none; /* Нельзя нажать */
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.2;
+            pointer-events: none;
             transition: 0.3s;
         }
 
-        #next-btn.active { opacity: 1; pointer-events: auto; box-shadow: 0 0 15px var(--pink); }
+        #action-btn.ready { opacity: 1; pointer-events: auto; box-shadow: 0 0 20px var(--accent); }
 
-        .result-screen { display: none; }
+        .final-screen { display: none; }
+        .final-score { font-size: 3rem; font-weight: 900; margin: 20px 0; color: var(--accent); }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div id="quiz-ui">
-        <div class="progress" id="progress">Вопрос 1 из 10</div>
-        <h2 id="q-text">Загрузка...</h2>
-        <div class="ans-grid" id="ans-box"></div>
+<div class="quiz-card">
+    <div id="game-view">
+        <div class="progress-container"><div id="progress-fill"></div></div>
+        <h2 id="q-text">Грузим вопросы...</h2>
+        <div class="answers-list" id="ans-box"></div>
         
-        <div class="meme-wrap" id="meme-wrap">
+        <div class="meme-area" id="meme-box">
             <img id="meme-pic" class="meme-img" src="">
         </div>
 
-        <button id="next-btn">СЛЕДУЮЩИЙ ВОПРОС ➔</button>
+        <button id="action-btn">ВЫБЕРИТЕ ОТВЕТ</button>
     </div>
 
-    <div id="res-ui" class="result-screen">
-        <h1>ТЕСТ ЗАВЕРШЕН</h1>
-        <p id="score-text" style="font-size: 2rem;"></p>
-        <button class="btn" onclick="location.reload()" style="width:100%">ПРОЙТИ ЕЩЕ РАЗ</button>
+    <div id="end-view" class="final-screen">
+        <h1>Квиз пройден! 🏆</h1>
+        <div class="final-score" id="result-score">0 / 10</div>
+        <button class="btn" style="width:100%; border-color: var(--pink)" onclick="location.reload()">ПОПРОБОВАТЬ СНОВА</button>
     </div>
 </div>
 
 <script>
-    const sWin = new Audio('correct.mp3');
-    const sFail = new Audio('wrong.mp3');
+    const sOk = new Audio('correct.mp3');
+    const sNo = new Audio('wrong.mp3');
 
-    const data = [
-        { q: "Что выведет typeof [] в JS?", a: ["'object'", "'array'", "'list'"], ok: "'object'", mc: "https://i.ibb.co/Q3bnMVNg/b120e00c34bdcef1bc63e4bbf61f08b2.jpg", mw: "https://i.ibb.co/nqvJKX96/5b920809473378aae3b6c81d99f222de.jpg" },
-        { q: "Git - это...", a: ["Система контроля версий", "Язык", "Браузер"], ok: "Система контроля версий", mc: "https://i.ibb.co/TMnPxH08/062244a274f14bac6a574aa70a210b55.jpg", mw: "https://i.ibb.co/6RHWNFMZ/2537fd8775db439628db40822604cf4a.jpg" },
-        { q: "Какой протокол шифрует данные?", a: ["HTTPS", "HTTP", "FTP"], ok: "HTTPS", mc: "https://i.ibb.co/bZn0mPf/b7310eccd9b10909f2a14c5df99009d3.jpg", mw: "https://i.ibb.co/0pkLPsNW/c759c02d64bd2e465250e35733d07082.jpg" },
-        { q: "Что такое 'баг'?", a: ["Ошибка в коде", "Живое насекомое", "Фича"], ok: "Ошибка в коде", mc: "https://i.ibb.co/d04LhG1W/7f07a7c3eb602bc4a99d9ea4d22f38a0.jpg", mw: "https://i.ibb.co/Z1k6kWrF/2229299b41dcff3cb2f627672e9374a8.jpg" },
-        { q: "Главный язык для ИИ?", a: ["Python", "PHP", "Pascal"], ok: "Python", mc: "https://i.ibb.co/rVp8mFg/b8fa2036e07be399b7a86791902c919e.jpg", mw: "https://i.ibb.co/WpHhyPXf/b7debdf6e346b9619ec821380408dd13.jpg" },
-        { q: "Как выйти из Vim?", a: [":wq", "Ctrl+C", "Alt+F4"], ok: ":wq", mc: "https://i.ibb.co/4w0NSjmP/15c60e12d6140c98731423a283303575.jpg", mw: "https://i.ibb.co/ym4M1rLc/e0507bbd915b36e74b4233613d54f80f.gif" },
-        { q: "SQL используется для...", a: ["Баз данных", "Стилей сайтов", "Монтажа видео"], ok: "Баз данных", mc: "https://i.ibb.co/YTw2X4FN/e43cfe173ed2a556d7c6eaace45754cd.jpg", mw: "https://i.ibb.co/bRsgvw2L/2593af15c04f2c0cc26e7c9efa188c7b.jpg" },
-        { q: "Что такое API?", a: ["Интерфейс программ", "Тип процессора", "Марка монитора"], ok: "Интерфейс программ", mc: "https://i.ibb.co/5xCXp3mk/40a06494a9d4528d2f6cddf967bd9ff8.jpg", mw: "https://i.ibb.co/cpZzjT7/cf1a1a190fc521a534687e6d0ccb9bf6.jpg" },
-        { q: "Основатель Linux?", a: ["Линус Торвальдс", "Билл Гейтс", "Стив Джобс"], ok: "Линус Торвальдс", mc: "https://i.ibb.co/spGsBhm5/dfcf944ce161be48376b49a7bd84eff5.jpg", mw: "https://i.ibb.co/BHPwnvK8/072531631eafbf66ff837e4404313669.jpg" },
-        { q: "1 Гб - это сколько Мб?", a: ["1024", "1000", "512"], ok: "1024", mc: "https://i.ibb.co/GfmCMHdv/b6deb519ad7697ea88d3f36b08df5aa1.jpg", mw: "https://i.ibb.co/sp8v97fs/f761d08b2a4d5ef21a9f733231322b0e.jpg" }
+    const questions = [
+        { q: "Сочетание клавиш для копирования?", a: ["Ctrl + C", "Ctrl + V", "Alt + F4"], ok: "Ctrl + C", mc: "https://i.ibb.co/Q3bnMVNg/b120e00c34bdcef1bc63e4bbf61f08b2.jpg", mw: "https://i.ibb.co/nqvJKX96/5b920809473378aae3b6c81d99f222de.jpg" },
+        { q: "Как называют 'мозг' компьютера?", a: ["Процессор", "Монитор", "Коврик для мыши"], ok: "Процессор", mc: "https://i.ibb.co/TMnPxH08/062244a274f14bac6a574aa70a210b55.jpg", mw: "https://i.ibb.co/6RHWNFMZ/2537fd8775db439628db40822604cf4a.jpg" },
+        { q: "Что нужно сделать, если всё зависло?", a: ["Выключить и включить", "Постучать по монитору", "Поплакать"], ok: "Выключить и включить", mc: "https://i.ibb.co/bZn0mPf/b7310eccd9b10909f2a14c5df99009d3.jpg", mw: "https://i.ibb.co/0pkLPsNW/c759c02d64bd2e465250e35733d07082.jpg" },
+        { q: "Где хранятся удаленные файлы?", a: ["В корзине", "В облаке", "В системном блоке"], ok: "В корзине", mc: "https://i.ibb.co/d04LhG1W/7f07a7c3eb602bc4a99d9ea4d22f38a0.jpg", mw: "https://i.ibb.co/Z1k6kWrF/2229299b41dcff3cb2f627672e9374a8.jpg" },
+        { q: "Что такое Wi-Fi?", a: ["Беспроводной интернет", "Тип флешки", "Название ноутбука"], ok: "Беспроводной интернет", mc: "https://i.ibb.co/rVp8mFg/b8fa2036e07be399b7a86791902c919e.jpg", mw: "https://i.ibb.co/WpHhyPXf/b7debdf6e346b9619ec821380408dd13.jpg" },
+        { q: "Какой клавишей обновляют страницу?", a: ["F5", "Esc", "Enter"], ok: "F5", mc: "https://i.ibb.co/4w0NSjmP/15c60e12d6140c98731423a283303575.jpg", mw: "https://i.ibb.co/ym4M1rLc/e0507bbd915b36e74b4233613d54f80f.gif" },
+        { q: "Google Chrome — это...", a: ["Браузер", "Антивирус", "Игра"], ok: "Браузер", mc: "https://i.ibb.co/YTw2X4FN/e43cfe173ed2a556d7c6eaace45754cd.jpg", mw: "https://i.ibb.co/bRsgvw2L/2593af15c04f2c0cc26e7c9efa188c7b.jpg" },
+        { q: "Самая длинная клавиша?", a: ["Пробел", "Shift", "Backspace"], ok: "Пробел", mc: "https://i.ibb.co/5xCXp3mk/40a06494a9d4528d2f6cddf967bd9ff8.jpg", mw: "https://i.ibb.co/cpZzjT7/cf1a1a190fc521a534687e6d0ccb9bf6.jpg" },
+        { q: "Что означает 404 ошибка?", a: ["Страница не найдена", "Вирус!", "Компьютер перегрелся"], ok: "Страница не найдена", mc: "https://i.ibb.co/spGsBhm5/dfcf944ce161be48376b49a7bd84eff5.jpg", mw: "https://i.ibb.co/BHPwnvK8/072531631eafbf66ff837e4404313669.jpg" },
+        { q: "Кто такой Билл Гейтс?", a: ["Основатель Microsoft", "Актер", "Твой сосед"], ok: "Основатель Microsoft", mc: "https://i.ibb.co/GfmCMHdv/b6deb519ad7697ea88d3f36b08df5aa1.jpg", mw: "https://i.ibb.co/sp8v97fs/f761d08b2a4d5ef21a9f733231322b0e.jpg" }
     ];
 
-    let cur = 0; let score = 0;
+    let step = 0; let points = 0;
 
-    function render() {
-        const q = data[cur];
-        document.getElementById('progress').innerText = `Вопрос ${cur + 1} из ${data.length}`;
+    function init() {
+        const q = questions[step];
         document.getElementById('q-text').innerText = q.q;
+        document.getElementById('progress-fill').style.width = (step / questions.length * 100) + "%";
         
         const box = document.getElementById('ans-box');
         box.innerHTML = "";
         
-        // Перемешиваем ответы
-        const shuffled = [...q.a].sort(() => Math.random() - 0.5);
-
-        shuffled.forEach(t => {
+        const variants = [...q.a].sort(() => Math.random() - 0.5);
+        variants.forEach(v => {
             const b = document.createElement('button');
-            b.innerText = t;
-            b.classList.add('btn');
-            b.onclick = () => check(t, b);
+            b.innerText = v; b.className = 'btn';
+            b.onclick = () => select(v, b);
             box.appendChild(b);
         });
 
-        // Сброс мема и кнопки
-        document.getElementById('meme-wrap').style.display = 'none';
-        const nBtn = document.getElementById('next-btn');
-        nBtn.classList.remove('active');
-        nBtn.innerText = "ВЫБЕРИТЕ ОТВЕТ";
+        document.getElementById('meme-box').style.display = 'none';
+        const aBtn = document.getElementById('action-btn');
+        aBtn.classList.remove('ready');
+        aBtn.innerText = "ВЫБЕРИТЕ ОТВЕТ";
     }
 
-    function check(val, btn) {
-        const q = data[cur];
+    function select(val, btn) {
+        const q = questions[step];
         const all = document.querySelectorAll('.btn');
-        all.forEach(b => b.disabled = true); // Блокируем кнопки
+        all.forEach(b => b.disabled = true);
 
-        const wrap = document.getElementById('meme-wrap');
         const pic = document.getElementById('meme-pic');
-        wrap.style.display = 'block';
+        document.getElementById('meme-box').style.display = 'block';
 
         if(val === q.ok) {
-            score++;
-            btn.classList.add('correct');
-            sWin.play().catch(()=>{});
-            pic.src = q.mc;
+            points++; btn.classList.add('correct');
+            sOk.play().catch(()=>{}); pic.src = q.mc;
         } else {
             btn.classList.add('wrong');
-            sFail.play().catch(()=>{});
-            pic.src = q.mw;
-            // Подсветка правильного
+            sNo.play().catch(()=>{}); pic.src = q.mw;
             all.forEach(b => { if(b.innerText === q.ok) b.classList.add('correct'); });
         }
 
-        // Активируем кнопку "Дальше"
-        const nBtn = document.getElementById('next-btn');
-        nBtn.classList.add('active');
-        nBtn.innerText = (cur === data.length - 1) ? "ПОСМОТРЕТЬ РЕЗУЛЬТАТ" : "СЛЕДУЮЩИЙ ВОПРОС ➔";
+        const aBtn = document.getElementById('action-btn');
+        aBtn.classList.add('ready');
+        aBtn.innerText = (step === questions.length - 1) ? "ПОСМОТРЕТЬ ИТОГ" : "ДАЛЬШЕ ➔";
     }
 
-    document.getElementById('next-btn').onclick = () => {
-        if(cur < data.length - 1) {
-            cur++;
-            render();
+    document.getElementById('action-btn').onclick = () => {
+        if(step < questions.length - 1) {
+            step++; init();
         } else {
-            showResults();
+            document.getElementById('game-view').style.display = 'none';
+            document.getElementById('end-view').style.display = 'block';
+            document.getElementById('result-score').innerText = points + " / " + questions.length;
+            document.getElementById('progress-fill').style.width = "100%";
         }
     };
 
-    function showResults() {
-        document.getElementById('quiz-ui').style.display = 'none';
-        document.getElementById('res-ui').style.display = 'block';
-        document.getElementById('score-text').innerText = `${score} / ${data.length}`;
-    }
-
-    render();
+    init();
 </script>
 </body>
 </html>
