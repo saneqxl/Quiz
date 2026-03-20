@@ -3,177 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IT Meme Quiz Ultra 🚀</title>
+    <title>IT Meme Quiz: Final Edition 🚀</title>
     <style>
         :root {
-            --neon-blue: #00d2ff;
-            --neon-pink: #ff0080;
+            --accent: #00d2ff;
+            --pink: #ff0080;
             --bg: #0b0e14;
         }
 
         body {
             margin: 0;
             font-family: 'Segoe UI', sans-serif;
-            background: var(--bg);
+            background: #1a1a2e;
             color: white;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Анимированный фон */
-        .bg-animate {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(45deg, #0f0c29, #302b63, #24243e);
-            z-index: -1;
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 25px;
-            padding: 30px;
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--accent);
+            border-radius: 20px;
+            padding: 25px;
             width: 90%;
-            max-width: 500px;
+            max-width: 450px;
             text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
         }
 
-        h1 { font-size: 1.8rem; margin-bottom: 20px; color: var(--neon-blue); text-transform: uppercase; }
-
-        .q-card { min-height: 60px; font-size: 1.2rem; margin-bottom: 25px; font-weight: bold; }
+        .progress { font-size: 0.9rem; color: var(--accent); margin-bottom: 10px; }
+        h2 { font-size: 1.3rem; margin-bottom: 20px; min-height: 50px; }
 
         .ans-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
 
         .btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--neon-blue);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--accent);
             color: white;
-            padding: 15px;
-            border-radius: 12px;
+            padding: 14px;
+            border-radius: 10px;
             cursor: pointer;
             font-size: 1rem;
-            transition: 0.2s;
+            transition: 0.3s;
         }
 
-        .btn:hover:not(:disabled) { background: var(--neon-blue); color: black; box-shadow: 0 0 15px var(--neon-blue); }
+        .btn:hover:not(:disabled) { background: var(--accent); color: #000; }
         
-        .btn:disabled { opacity: 0.8; cursor: default; }
-
+        /* Цвета ответов */
         .correct { background: #2ecc71 !important; border-color: #2ecc71 !important; color: white !important; }
         .wrong { background: #e74c3c !important; border-color: #e74c3c !important; color: white !important; }
 
-        .meme-box { margin-top: 20px; display: none; }
-        .meme-img { width: 100%; max-height: 250px; border-radius: 15px; border: 2px solid var(--neon-pink); object-fit: contain; }
+        /* Мемы */
+        .meme-wrap { margin-top: 15px; height: 200px; display: none; }
+        .meme-img { width: 100%; height: 100%; object-fit: contain; border-radius: 10px; border: 1px solid var(--pink); }
 
+        /* Кнопка "Дальше" - теперь она видна, но заблокирована до ответа */
         #next-btn {
-            background: var(--neon-pink);
+            background: var(--pink);
             border: none;
             width: 100%;
             margin-top: 20px;
             font-weight: bold;
-            display: none;
-            box-shadow: 0 0 15px var(--neon-pink);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            opacity: 0.3; /* Тусклая, пока не ответишь */
+            pointer-events: none; /* Нельзя нажать */
+            transition: 0.3s;
         }
 
-        .res-box { display: none; }
+        #next-btn.active { opacity: 1; pointer-events: auto; box-shadow: 0 0 15px var(--pink); }
+
+        .result-screen { display: none; }
     </style>
 </head>
 <body>
 
-<div class="bg-animate"></div>
-
 <div class="container">
     <div id="quiz-ui">
-        <h1 id="title">System Debug Quiz 🤖</h1>
-        <div class="q-card" id="q-text">Инициализация...</div>
+        <div class="progress" id="progress">Вопрос 1 из 10</div>
+        <h2 id="q-text">Загрузка...</h2>
         <div class="ans-grid" id="ans-box"></div>
-        <div class="meme-box" id="meme-box">
-            <img id="meme-pic" class="meme-img" src="" alt="meme">
+        
+        <div class="meme-wrap" id="meme-wrap">
+            <img id="meme-pic" class="meme-img" src="">
         </div>
-        <button id="next-btn" class="btn">ПРОДОЛЖИТЬ >></button>
+
+        <button id="next-btn">СЛЕДУЮЩИЙ ВОПРОС ➔</button>
     </div>
 
-    <div id="res-ui" class="res-box">
-        <h1>РЕЗУЛЬТАТ ТЕСТА</h1>
+    <div id="res-ui" class="result-screen">
+        <h1>ТЕСТ ЗАВЕРШЕН</h1>
         <p id="score-text" style="font-size: 2rem;"></p>
-        <button class="btn" onclick="location.reload()" style="width:100%">ПЕРЕЗАГРУЗКА</button>
+        <button class="btn" onclick="location.reload()" style="width:100%">ПРОЙТИ ЕЩЕ РАЗ</button>
     </div>
 </div>
 
 <script>
-    // Звуки
     const sWin = new Audio('correct.mp3');
     const sFail = new Audio('wrong.mp3');
 
     const data = [
-        { q: "Что выведет typeof NaN?", a: ["'number'", "'string'", "'undefined'", "'object'"], ok: "'number'", mc: "https://i.ibb.co/Q3bnMVNg/b120e00c34bdcef1bc63e4bbf61f08b2.jpg", mw: "https://i.ibb.co/nqvJKX96/5b920809473378aae3b6c81d99f222de.jpg" },
-        { q: "Стек работает по принципу...", a: ["LIFO (Последний зашел - первый вышел)", "FIFO (Первый зашел - первый вышел)"], ok: "LIFO (Последний зашел - первый вышел)", mc: "https://i.ibb.co/TMnPxH08/062244a274f14bac6a574aa70a210b55.jpg", mw: "https://i.ibb.co/6RHWNFMZ/2537fd8775db439628db40822604cf4a.jpg" },
-        { q: "Какой протокол защищенный?", a: ["HTTPS", "HTTP", "FTP", "Telnet"], ok: "HTTPS", mc: "https://i.ibb.co/bZn0mPf/b7310eccd9b10909f2a14c5df99009d3.jpg", mw: "https://i.ibb.co/0pkLPsNW/c759c02d64bd2e465250e35733d07082.jpg" },
-        { q: "Где хранятся временные данные ПК?", a: ["В оперативной памяти (RAM)", "На жестком диске", "В процессоре"], ok: "В оперативной памяти (RAM)", mc: "https://i.ibb.co/d04LhG1W/7f07a7c3eb602bc4a99d9ea4d22f38a0.jpg", mw: "https://i.ibb.co/Z1k6kWrF/2229299b41dcff3cb2f627672e9374a8.jpg" },
-        { q: "Для чего используется Docker?", a: ["Для контейнеризации", "Для верстки сайтов", "Для написания игр"], ok: "Для контейнеризации", mc: "https://i.ibb.co/rVp8mFg/b8fa2036e07be399b7a86791902c919e.jpg", mw: "https://i.ibb.co/WpHhyPXf/b7debdf6e346b9619ec821380408dd13.jpg" },
-        { q: "1024 Гигабайта — это...", a: ["1 Терабайт", "1 Петабайт", "1000 Терабайт"], ok: "1 Терабайт", mc: "https://i.ibb.co/4w0NSjmP/15c60e12d6140c98731423a283303575.jpg", mw: "https://i.ibb.co/ym4M1rLc/e0507bbd915b36e74b4233613d54f80f.gif" },
-        { q: "Что делает команда git push?", a: ["Отправляет код в репозиторий", "Скачивает код", "Удаляет проект"], ok: "Отправляет код в репозиторий", mc: "https://i.ibb.co/YTw2X4FN/e43cfe173ed2a556d7c6eaace45754cd.jpg", mw: "https://i.ibb.co/bRsgvw2L/2593af15c04f2c0cc26e7c9efa188c7b.jpg" },
-        { q: "Самый популярный язык для ИИ?", a: ["Python", "PHP", "C++", "Pascal"], ok: "Python", mc: "https://i.ibb.co/5xCXp3mk/40a06494a9d4528d2f6cddf967bd9ff8.jpg", mw: "https://i.ibb.co/cpZzjT7/cf1a1a190fc521a534687e6d0ccb9bf6.jpg" },
-        { q: "Как расшифровывается SQL?", a: ["Structured Query Language", "Strong Quick Logic", "Simple Question List"], ok: "Structured Query Language", mc: "https://i.ibb.co/spGsBhm5/dfcf944ce161be48376b49a7bd84eff5.jpg", mw: "https://i.ibb.co/BHPwnvK8/072531631eafbf66ff837e4404313669.jpg" },
-        { q: "Кто основал Microsoft?", a: ["Билл Гейтс", "Павел Дуров", "Илон Маск"], ok: "Билл Гейтс", mc: "https://i.ibb.co/GfmCMHdv/b6deb519ad7697ea88d3f36b08df5aa1.jpg", mw: "https://i.ibb.co/sp8v97fs/f761d08b2a4d5ef21a9f733231322b0e.jpg" }
+        { q: "Что выведет typeof [] в JS?", a: ["'object'", "'array'", "'list'"], ok: "'object'", mc: "https://i.ibb.co/Q3bnMVNg/b120e00c34bdcef1bc63e4bbf61f08b2.jpg", mw: "https://i.ibb.co/nqvJKX96/5b920809473378aae3b6c81d99f222de.jpg" },
+        { q: "Git - это...", a: ["Система контроля версий", "Язык", "Браузер"], ok: "Система контроля версий", mc: "https://i.ibb.co/TMnPxH08/062244a274f14bac6a574aa70a210b55.jpg", mw: "https://i.ibb.co/6RHWNFMZ/2537fd8775db439628db40822604cf4a.jpg" },
+        { q: "Какой протокол шифрует данные?", a: ["HTTPS", "HTTP", "FTP"], ok: "HTTPS", mc: "https://i.ibb.co/bZn0mPf/b7310eccd9b10909f2a14c5df99009d3.jpg", mw: "https://i.ibb.co/0pkLPsNW/c759c02d64bd2e465250e35733d07082.jpg" },
+        { q: "Что такое 'баг'?", a: ["Ошибка в коде", "Живое насекомое", "Фича"], ok: "Ошибка в коде", mc: "https://i.ibb.co/d04LhG1W/7f07a7c3eb602bc4a99d9ea4d22f38a0.jpg", mw: "https://i.ibb.co/Z1k6kWrF/2229299b41dcff3cb2f627672e9374a8.jpg" },
+        { q: "Главный язык для ИИ?", a: ["Python", "PHP", "Pascal"], ok: "Python", mc: "https://i.ibb.co/rVp8mFg/b8fa2036e07be399b7a86791902c919e.jpg", mw: "https://i.ibb.co/WpHhyPXf/b7debdf6e346b9619ec821380408dd13.jpg" },
+        { q: "Как выйти из Vim?", a: [":wq", "Ctrl+C", "Alt+F4"], ok: ":wq", mc: "https://i.ibb.co/4w0NSjmP/15c60e12d6140c98731423a283303575.jpg", mw: "https://i.ibb.co/ym4M1rLc/e0507bbd915b36e74b4233613d54f80f.gif" },
+        { q: "SQL используется для...", a: ["Баз данных", "Стилей сайтов", "Монтажа видео"], ok: "Баз данных", mc: "https://i.ibb.co/YTw2X4FN/e43cfe173ed2a556d7c6eaace45754cd.jpg", mw: "https://i.ibb.co/bRsgvw2L/2593af15c04f2c0cc26e7c9efa188c7b.jpg" },
+        { q: "Что такое API?", a: ["Интерфейс программ", "Тип процессора", "Марка монитора"], ok: "Интерфейс программ", mc: "https://i.ibb.co/5xCXp3mk/40a06494a9d4528d2f6cddf967bd9ff8.jpg", mw: "https://i.ibb.co/cpZzjT7/cf1a1a190fc521a534687e6d0ccb9bf6.jpg" },
+        { q: "Основатель Linux?", a: ["Линус Торвальдс", "Билл Гейтс", "Стив Джобс"], ok: "Линус Торвальдс", mc: "https://i.ibb.co/spGsBhm5/dfcf944ce161be48376b49a7bd84eff5.jpg", mw: "https://i.ibb.co/BHPwnvK8/072531631eafbf66ff837e4404313669.jpg" },
+        { q: "1 Гб - это сколько Мб?", a: ["1024", "1000", "512"], ok: "1024", mc: "https://i.ibb.co/GfmCMHdv/b6deb519ad7697ea88d3f36b08df5aa1.jpg", mw: "https://i.ibb.co/sp8v97fs/f761d08b2a4d5ef21a9f733231322b0e.jpg" }
     ];
 
     let cur = 0; let score = 0;
 
     function render() {
         const q = data[cur];
-        document.getElementById('q-text').innerText = (cur + 1) + ". " + q.q;
+        document.getElementById('progress').innerText = `Вопрос ${cur + 1} из ${data.length}`;
+        document.getElementById('q-text').innerText = q.q;
+        
         const box = document.getElementById('ans-box');
         box.innerHTML = "";
         
-        // Перемешка
+        // Перемешиваем ответы
         const shuffled = [...q.a].sort(() => Math.random() - 0.5);
 
         shuffled.forEach(t => {
             const b = document.createElement('button');
-            b.innerText = t; b.classList.add('btn');
+            b.innerText = t;
+            b.classList.add('btn');
             b.onclick = () => check(t, b);
             box.appendChild(b);
         });
 
-        document.getElementById('meme-box').style.display = 'none';
-        document.getElementById('next-btn').style.display = 'none';
+        // Сброс мема и кнопки
+        document.getElementById('meme-wrap').style.display = 'none';
+        const nBtn = document.getElementById('next-btn');
+        nBtn.classList.remove('active');
+        nBtn.innerText = "ВЫБЕРИТЕ ОТВЕТ";
     }
 
-    function check(txt, b) {
+    function check(val, btn) {
         const q = data[cur];
         const all = document.querySelectorAll('.btn');
-        all.forEach(btn => btn.disabled = true);
-        
-        const pic = document.getElementById('meme-pic');
-        document.getElementById('meme-box').style.display = 'block';
+        all.forEach(b => b.disabled = true); // Блокируем кнопки
 
-        if(txt === q.ok) {
-            score++; b.classList.add('correct');
-            sWin.play().catch(()=>{}); pic.src = q.mc;
+        const wrap = document.getElementById('meme-wrap');
+        const pic = document.getElementById('meme-pic');
+        wrap.style.display = 'block';
+
+        if(val === q.ok) {
+            score++;
+            btn.classList.add('correct');
+            sWin.play().catch(()=>{});
+            pic.src = q.mc;
         } else {
-            b.classList.add('wrong');
-            sFail.play().catch(()=>{}); pic.src = q.mw;
-            all.forEach(btn => { if(btn.innerText === q.ok) btn.classList.add('correct'); });
+            btn.classList.add('wrong');
+            sFail.play().catch(()=>{});
+            pic.src = q.mw;
+            // Подсветка правильного
+            all.forEach(b => { if(b.innerText === q.ok) b.classList.add('correct'); });
         }
 
-        if(cur < data.length - 1) document.getElementById('next-btn').style.display = 'block';
-        else setTimeout(end, 2500);
+        // Активируем кнопку "Дальше"
+        const nBtn = document.getElementById('next-btn');
+        nBtn.classList.add('active');
+        nBtn.innerText = (cur === data.length - 1) ? "ПОСМОТРЕТЬ РЕЗУЛЬТАТ" : "СЛЕДУЮЩИЙ ВОПРОС ➔";
     }
 
     document.getElementById('next-btn').onclick = () => {
-        cur++; render();
+        if(cur < data.length - 1) {
+            cur++;
+            render();
+        } else {
+            showResults();
+        }
     };
 
-    function end() {
+    function showResults() {
         document.getElementById('quiz-ui').style.display = 'none';
         document.getElementById('res-ui').style.display = 'block';
-        document.getElementById('score-text').innerText = score + " / " + data.length;
+        document.getElementById('score-text').innerText = `${score} / ${data.length}`;
     }
 
     render();
