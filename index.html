@@ -3,164 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IT Meme Quiz: Lite & Fun 🚀</title>
+    <title>Ultimate IT Quiz: Legend Edition 🏆</title>
     <style>
-        :root {
-            --accent: #00f2fe;
-            --pink: #ff0080;
-            --bg: #0f172a;
-        }
-
+        /* Живой анимированный фон */
         body {
             margin: 0;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background: var(--bg);
-            background: radial-gradient(circle at top right, #1e293b, #0f172a);
-            color: white;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-        }
-
-        /* Контейнер с эффектом стекла */
-        .quiz-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-            padding: 30px;
-            width: 90%;
-            max-width: 450px;
-            text-align: center;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Полоска прогресса */
-        .progress-container {
-            width: 100%;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            margin-bottom: 25px;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            color: white;
             overflow: hidden;
         }
 
-        #progress-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, var(--accent), var(--pink));
-            transition: width 0.4s ease;
-            box-shadow: 0 0 10px var(--accent);
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
-        h2 { font-size: 1.4rem; margin-bottom: 25px; line-height: 1.3; }
+        /* Стеклянная карточка */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            padding: 35px;
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            animation: slideUp 0.6s ease-out;
+        }
 
-        .answers-list { display: grid; gap: 12px; }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header-title { font-size: 2rem; font-weight: 900; margin-bottom: 20px; text-shadow: 2px 2px 10px rgba(0,0,0,0.2); }
+
+        /* Прогресс-бар */
+        .bar-bg { width: 100%; height: 8px; background: rgba(0,0,0,0.2); border-radius: 10px; margin-bottom: 25px; }
+        .bar-fill { height: 100%; width: 0%; background: #fff; border-radius: 10px; transition: 0.5s; box-shadow: 0 0 10px #fff; }
+
+        .question-text { font-size: 1.3rem; margin-bottom: 25px; font-weight: 600; min-height: 60px; }
+
+        .btn-list { display: grid; gap: 12px; }
 
         .btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
             color: white;
             padding: 16px;
-            border-radius: 14px;
+            border-radius: 15px;
             cursor: pointer;
-            font-size: 1.05rem;
-            transition: 0.2s;
-            outline: none;
-        }
-
-        .btn:hover:not(:disabled) {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: var(--accent);
-            transform: scale(1.02);
-        }
-
-        .correct { background: #10b981 !important; border-color: #10b981 !important; box-shadow: 0 0 15px #10b981; }
-        .wrong { background: #ef4444 !important; border-color: #ef4444 !important; }
-
-        .meme-area { margin-top: 20px; height: 180px; display: none; }
-        .meme-img { width: 100%; height: 100%; object-fit: contain; border-radius: 12px; }
-
-        /* Кнопка управления */
-        #action-btn {
-            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
-            color: #000;
-            border: none;
-            width: 100%;
-            margin-top: 25px;
-            padding: 16px;
-            border-radius: 14px;
-            font-weight: 800;
-            font-size: 1rem;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            opacity: 0.2;
-            pointer-events: none;
+            font-size: 1.1rem;
+            font-weight: 600;
             transition: 0.3s;
         }
 
-        #action-btn.ready { opacity: 1; pointer-events: auto; box-shadow: 0 0 20px var(--accent); }
+        .btn:hover:not(:disabled) {
+            background: white;
+            color: #e73c7e;
+            transform: scale(1.03);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
 
-        .final-screen { display: none; }
-        .final-score { font-size: 3rem; font-weight: 900; margin: 20px 0; color: var(--accent); }
+        .btn:disabled { opacity: 0.7; }
+
+        .correct { background: #00ff88 !important; color: #004d2a !important; border-color: #00ff88 !important; }
+        .wrong { background: #ff4d4d !important; color: white !important; border-color: #ff4d4d !important; }
+
+        .meme-container { margin-top: 20px; height: 180px; display: none; }
+        .meme-img { width: 100%; height: 100%; object-fit: contain; border-radius: 15px; }
+
+        /* Финальная кнопка */
+        #next-btn {
+            background: white;
+            color: #23a6d5;
+            border: none;
+            width: 100%;
+            margin-top: 20px;
+            padding: 18px;
+            border-radius: 15px;
+            font-weight: 900;
+            cursor: pointer;
+            display: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Стили финала */
+        .xp-text { font-size: 2.5rem; font-weight: 900; margin: 10px 0; color: #fff; text-shadow: 0 0 20px rgba(255,255,255,0.5); }
+        .rank-badge { background: white; color: #ff0080; padding: 5px 15px; border-radius: 50px; font-weight: 900; display: inline-block; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-<div class="quiz-card">
-    <div id="game-view">
-        <div class="progress-container"><div id="progress-fill"></div></div>
-        <h2 id="q-text">Грузим вопросы...</h2>
-        <div class="answers-list" id="ans-box"></div>
+<div class="glass-card">
+    <div id="quiz-ui">
+        <div class="header-title">LEVEL UP QUIZ</div>
+        <div class="bar-bg"><div class="bar-fill" id="progress"></div></div>
+        <div class="question-text" id="q-text">Загрузка системы...</div>
+        <div class="btn-list" id="ans-box"></div>
         
-        <div class="meme-area" id="meme-box">
+        <div class="meme-container" id="meme-box">
             <img id="meme-pic" class="meme-img" src="">
         </div>
 
-        <button id="action-btn">ВЫБЕРИТЕ ОТВЕТ</button>
+        <button id="next-btn">ДАЛЬШЕ ➔</button>
     </div>
 
-    <div id="end-view" class="final-screen">
-        <h1>Квиз пройден! 🏆</h1>
-        <div class="final-score" id="result-score">0 / 10</div>
-        <button class="btn" style="width:100%; border-color: var(--pink)" onclick="location.reload()">ПОПРОБОВАТЬ СНОВА</button>
+    <div id="final-ui" style="display:none;">
+        <h1 style="margin-bottom: 5px;">MISSION COMPLETE</h1>
+        <div class="rank-badge" id="rank-name">NOOB</div>
+        <div class="xp-text" id="total-xp">0 XP</div>
+        <p id="final-stats"></p>
+        <button class="btn" style="width:100%; background: white; color: #000;" onclick="location.reload()">RESTART</button>
     </div>
 </div>
 
 <script>
-    const sOk = new Audio('correct.mp3');
-    const sNo = new Audio('wrong.mp3');
+    const soundOk = new Audio('correct.mp3');
+    const soundNo = new Audio('wrong.mp3');
 
-    const questions = [
-        { q: "Сочетание клавиш для копирования?", a: ["Ctrl + C", "Ctrl + V", "Alt + F4"], ok: "Ctrl + C", mc: "https://i.ibb.co/Q3bnMVNg/b120e00c34bdcef1bc63e4bbf61f08b2.jpg", mw: "https://i.ibb.co/nqvJKX96/5b920809473378aae3b6c81d99f222de.jpg" },
-        { q: "Как называют 'мозг' компьютера?", a: ["Процессор", "Монитор", "Коврик для мыши"], ok: "Процессор", mc: "https://i.ibb.co/TMnPxH08/062244a274f14bac6a574aa70a210b55.jpg", mw: "https://i.ibb.co/6RHWNFMZ/2537fd8775db439628db40822604cf4a.jpg" },
-        { q: "Что нужно сделать, если всё зависло?", a: ["Выключить и включить", "Постучать по монитору", "Поплакать"], ok: "Выключить и включить", mc: "https://i.ibb.co/bZn0mPf/b7310eccd9b10909f2a14c5df99009d3.jpg", mw: "https://i.ibb.co/0pkLPsNW/c759c02d64bd2e465250e35733d07082.jpg" },
-        { q: "Где хранятся удаленные файлы?", a: ["В корзине", "В облаке", "В системном блоке"], ok: "В корзине", mc: "https://i.ibb.co/d04LhG1W/7f07a7c3eb602bc4a99d9ea4d22f38a0.jpg", mw: "https://i.ibb.co/Z1k6kWrF/2229299b41dcff3cb2f627672e9374a8.jpg" },
-        { q: "Что такое Wi-Fi?", a: ["Беспроводной интернет", "Тип флешки", "Название ноутбука"], ok: "Беспроводной интернет", mc: "https://i.ibb.co/rVp8mFg/b8fa2036e07be399b7a86791902c919e.jpg", mw: "https://i.ibb.co/WpHhyPXf/b7debdf6e346b9619ec821380408dd13.jpg" },
-        { q: "Какой клавишей обновляют страницу?", a: ["F5", "Esc", "Enter"], ok: "F5", mc: "https://i.ibb.co/4w0NSjmP/15c60e12d6140c98731423a283303575.jpg", mw: "https://i.ibb.co/ym4M1rLc/e0507bbd915b36e74b4233613d54f80f.gif" },
-        { q: "Google Chrome — это...", a: ["Браузер", "Антивирус", "Игра"], ok: "Браузер", mc: "https://i.ibb.co/YTw2X4FN/e43cfe173ed2a556d7c6eaace45754cd.jpg", mw: "https://i.ibb.co/bRsgvw2L/2593af15c04f2c0cc26e7c9efa188c7b.jpg" },
-        { q: "Самая длинная клавиша?", a: ["Пробел", "Shift", "Backspace"], ok: "Пробел", mc: "https://i.ibb.co/5xCXp3mk/40a06494a9d4528d2f6cddf967bd9ff8.jpg", mw: "https://i.ibb.co/cpZzjT7/cf1a1a190fc521a534687e6d0ccb9bf6.jpg" },
-        { q: "Что означает 404 ошибка?", a: ["Страница не найдена", "Вирус!", "Компьютер перегрелся"], ok: "Страница не найдена", mc: "https://i.ibb.co/spGsBhm5/dfcf944ce161be48376b49a7bd84eff5.jpg", mw: "https://i.ibb.co/BHPwnvK8/072531631eafbf66ff837e4404313669.jpg" },
-        { q: "Кто такой Билл Гейтс?", a: ["Основатель Microsoft", "Актер", "Твой сосед"], ok: "Основатель Microsoft", mc: "https://i.ibb.co/GfmCMHdv/b6deb519ad7697ea88d3f36b08df5aa1.jpg", mw: "https://i.ibb.co/sp8v97fs/f761d08b2a4d5ef21a9f733231322b0e.jpg" }
+    const quiz = [
+        { q: "Сочетание для копирования?", a: ["Ctrl + C", "Ctrl + V", "Alt + F4"], ok: "Ctrl + C", mc: "https://i.ibb.co/Q3bnMVNg/b120e00c34bdcef1bc63e4bbf61f08b2.jpg", mw: "https://i.ibb.co/nqvJKX96/5b920809473378aae3b6c81d99f222de.jpg" },
+        { q: "Как называют мозг ПК?", a: ["Процессор", "Монитор", "Мышка"], ok: "Процессор", mc: "https://i.ibb.co/TMnPxH08/062244a274f14bac6a574aa70a210b55.jpg", mw: "https://i.ibb.co/6RHWNFMZ/2537fd8775db439628db40822604cf4a.jpg" },
+        { q: "Что делать, если всё зависло?", a: ["Перезагрузить", "Постучать", "Поплакать"], ok: "Перезагрузить", mc: "https://i.ibb.co/bZn0mPf/b7310eccd9b10909f2a14c5df99009d3.jpg", mw: "https://i.ibb.co/0pkLPsNW/c759c02d64bd2e465250e35733d07082.jpg" },
+        { q: "Где хранятся удаленные файлы?", a: ["В корзине", "В облаке", "Удаляются навсегда"], ok: "В корзине", mc: "https://i.ibb.co/d04LhG1W/7f07a7c3eb602bc4a99d9ea4d22f38a0.jpg", mw: "https://i.ibb.co/Z1k6kWrF/2229299b41dcff3cb2f627672e9374a8.jpg" },
+        { q: "Что такое Wi-Fi?", a: ["Беспроводная сеть", "Название ноутбука", "Вид флешки"], ok: "Беспроводная сеть", mc: "https://i.ibb.co/rVp8mFg/b8fa2036e07be399b7a86791902c919e.jpg", mw: "https://i.ibb.co/WpHhyPXf/b7debdf6e346b9619ec821380408dd13.jpg" }
     ];
 
-    let step = 0; let points = 0;
+    let current = 0; let score = 0;
 
-    function init() {
-        const q = questions[step];
+    function render() {
+        const q = quiz[current];
         document.getElementById('q-text').innerText = q.q;
-        document.getElementById('progress-fill').style.width = (step / questions.length * 100) + "%";
+        document.getElementById('progress').style.width = (current / quiz.length * 100) + "%";
         
         const box = document.getElementById('ans-box');
         box.innerHTML = "";
         
-        const variants = [...q.a].sort(() => Math.random() - 0.5);
-        variants.forEach(v => {
+        q.a.forEach(v => {
             const b = document.createElement('button');
             b.innerText = v; b.className = 'btn';
             b.onclick = () => select(v, b);
@@ -168,13 +159,11 @@
         });
 
         document.getElementById('meme-box').style.display = 'none';
-        const aBtn = document.getElementById('action-btn');
-        aBtn.classList.remove('ready');
-        aBtn.innerText = "ВЫБЕРИТЕ ОТВЕТ";
+        document.getElementById('next-btn').style.display = 'none';
     }
 
     function select(val, btn) {
-        const q = questions[step];
+        const q = quiz[current];
         const all = document.querySelectorAll('.btn');
         all.forEach(b => b.disabled = true);
 
@@ -182,31 +171,40 @@
         document.getElementById('meme-box').style.display = 'block';
 
         if(val === q.ok) {
-            points++; btn.classList.add('correct');
-            sOk.play().catch(()=>{}); pic.src = q.mc;
+            score++; btn.classList.add('correct');
+            soundOk.play().catch(()=>{}); pic.src = q.mc;
         } else {
             btn.classList.add('wrong');
-            sNo.play().catch(()=>{}); pic.src = q.mw;
+            soundNo.play().catch(()=>{}); pic.src = q.mw;
             all.forEach(b => { if(b.innerText === q.ok) b.classList.add('correct'); });
         }
-
-        const aBtn = document.getElementById('action-btn');
-        aBtn.classList.add('ready');
-        aBtn.innerText = (step === questions.length - 1) ? "ПОСМОТРЕТЬ ИТОГ" : "ДАЛЬШЕ ➔";
+        document.getElementById('next-btn').style.display = 'block';
     }
 
-    document.getElementById('action-btn').onclick = () => {
-        if(step < questions.length - 1) {
-            step++; init();
+    document.getElementById('next-btn').onclick = () => {
+        if(current < quiz.length - 1) {
+            current++; render();
         } else {
-            document.getElementById('game-view').style.display = 'none';
-            document.getElementById('end-view').style.display = 'block';
-            document.getElementById('result-score').innerText = points + " / " + questions.length;
-            document.getElementById('progress-fill').style.width = "100%";
+            showEnd();
         }
     };
 
-    init();
+    function showEnd() {
+        document.getElementById('quiz-ui').style.display = 'none';
+        document.getElementById('final-ui').style.display = 'block';
+        
+        const xp = score * 100;
+        document.getElementById('total-xp').innerText = xp + " XP";
+        document.getElementById('final-stats').innerText = `Верно: ${score} из ${quiz.length}`;
+
+        let rank = "NOOB";
+        if(score >= 3) rank = "GAMER";
+        if(score >= 4) rank = "PRO";
+        if(score == 5) rank = "GOD OF IT";
+        document.getElementById('rank-name').innerText = rank;
+    }
+
+    render();
 </script>
 </body>
 </html>
